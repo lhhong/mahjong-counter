@@ -1,38 +1,24 @@
 {
   "name": "mahjong-counter",
-  "version": "0.1.0",
-  "engines": {
-    "node": "13.x"
-  },
+  "version": "0.0.1",
+  "repository": "git@github.com:lhhong/mahjong-counter.git",
+  "license": "UNLICENSED",
   "private": true,
-  "type": "module",
   "scripts": {
-    "start": "node src/backend/app.js",
-    "dev-be": "node-dev src/backend/app.js",
-    "start-react": "react-scripts start",
-    "start-react-plain": "BROWSER=none react-scripts start",
-    "build": "react-scripts build",
-    "dev": "npm run start-react & npm run dev-be"
+    "build": "tsc -p commons && tsc -p backend && cd frontend && yarn build",
+    "start": "NODE_ENV=production node backend/lib/app.js",
+    "dev": "./parallel.sh 'yarn workspace @z/frontend start' 'yarn workspace @z/backend dev'"
   },
+  "workspaces": [
+    "commons",
+    "backend",
+    "frontend"
+  ],
   "devDependencies": {
     "node-dev": "^4.0.0",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
-    "react-scripts": "^3.4.1"
+    "tslint": "^5.20.0",
+    "typescript": "^3.6.3",
+    "typescript-tslint-plugin": "^0.5.4"
   },
-  "dependencies": {
-    "express": "^4.17.1"
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  }
+  "homepage": "/"
 }

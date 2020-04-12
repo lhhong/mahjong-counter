@@ -1,0 +1,22 @@
+{
+  "name": "@z/backend",
+  "version": "0.0.1",
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "@z/commons": "0.0.1",
+    "body-parser": "^1.19.0",
+    "express": "^4.17.1"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.1",
+    "ts-node": "^8.5.4",
+    "ts-node-dev": "^1.0.0-pre.44"
+  },
+  "scripts": {
+    "start": "node lib/app.js",
+    "dev": "ts-node-dev src/app.ts"
+  }
+}
