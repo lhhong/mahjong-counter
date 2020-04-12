@@ -1,14 +1,21 @@
 {
   "name": "mahjong-counter",
   "version": "0.1.0",
+  "engines": {
+    "node": "13.x"
+  },
   "private": true,
   "type": "module",
   "scripts": {
     "start": "node src/backend/app.js",
+    "dev-be": "node-dev src/backend/app.js",
     "start-react": "react-scripts start",
-    "build-react": "react-scripts build"
+    "start-react-plain": "BROWSER=none react-scripts start",
+    "build": "react-scripts build",
+    "dev": "npm run start-react & npm run dev-be"
   },
   "devDependencies": {
+    "node-dev": "^4.0.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-scripts": "^3.4.1"
