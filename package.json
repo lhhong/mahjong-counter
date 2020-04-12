@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "start": "node src/backend/app.js",
-    "start-react": "node_modules/react-scripts/bin/react-scripts.js start",
-    "build-react": "node_modules/react-scripts/bin/react-scripts.js build"
+    "start-react": "react-scripts start",
+    "build-react": "react-scripts build"
   },
   "devDependencies": {
     "react": "^16.13.1",
