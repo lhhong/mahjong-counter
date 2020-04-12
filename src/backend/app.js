@@ -6,4 +6,4 @@ const app = express();
 app.use("/", express.static("./build"));
 app.use("/api", api)
 
-app.listen(8080, () => console.log("Server listening"));
+app.listen(process.env.PORT || 8080, () => console.log("Server listening"));
