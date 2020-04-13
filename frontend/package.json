@@ -6,7 +6,6 @@
     "@z/commons": "0.0.1",
     "bootstrap": "^4.4.1",
     "react": "^16.9.0",
-    "react-bootstrap": "^1.0.0",
     "react-dom": "^16.9.0",
     "react-redux": "^7.2.0",
     "react-router-dom": "^5.1.2",
@@ -18,7 +17,6 @@
   },
   "devDependencies": {
     "@types/react": "16.9.2",
-    "@types/react-bootstrap": "^1.0.0",
     "@types/react-dom": "16.9.0",
     "@types/react-redux": "^7.1.7",
     "@types/react-router-dom": "^5.1.3",

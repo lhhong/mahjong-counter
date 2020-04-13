@@ -1,5 +1,4 @@
 import * as React from "react";
-import 'bootstrap/dist/css/bootstrap.min.css';
 import { GameSetupView } from "./components/GameSetupView";
 import { GainsView } from "./components/GainsView";
 import { ActionView } from "./components/ActionView";
