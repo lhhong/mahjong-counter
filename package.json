@@ -1,13 +1,16 @@
 {
   "name": "mahjong-counter",
   "version": "0.0.1",
+  "engines": {
+    "node": "13.x"
+  },
   "repository": "git@github.com:lhhong/mahjong-counter.git",
   "license": "UNLICENSED",
   "private": true,
   "scripts": {
-    "build": "tsc -p commons && tsc -p backend && cd frontend && yarn build",
+    "build": "tsc -p commons && tsc -p backend && yarn workspace @z/frontend build",
     "start": "NODE_ENV=production node backend/lib/app.js",
-    "dev": "./parallel.sh 'yarn workspace @z/frontend start' 'yarn workspace @z/backend dev'"
+    "dev": "./start-dev.sh"
   },
   "workspaces": [
     "commons",
@@ -15,8 +18,9 @@
     "frontend"
   ],
   "devDependencies": {
+    "@types/node": "13.11.1",
     "node-dev": "^4.0.0",
-    "tslint": "^5.20.0",
+    "tslint": "^6.1.1",
     "typescript": "^3.6.3",
     "typescript-tslint-plugin": "^0.5.4"
   },
