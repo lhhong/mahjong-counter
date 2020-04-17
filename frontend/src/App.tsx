@@ -4,6 +4,7 @@ import { GainsView } from "./components/GainsView";
 import { ActionView } from "./components/ActionView";
 import { useSelector } from "react-redux";
 import { getConfig } from "./redux/selectors";
+import { HistoryView } from "./components/HistoryView";
 
 export const App = () => {
     const config = useSelector(getConfig);
@@ -12,6 +13,7 @@ export const App = () => {
         {config.factor !== 0 && <>
         <ActionView />
         <GainsView />
+        <HistoryView />
         </>}
     </div>);
 };
