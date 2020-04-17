@@ -45,6 +45,9 @@ const resultsReducer = TypedReducer.builder<Results>()
   .withHandler(LogicActions.newEvent.TYPE, (state, event) => {
     return setWith(state, { history: [event, ...state.history] })
   })
+  .withHandler(LogicActions.clearHistory.TYPE, (state, event) => {
+    return INITIAL_RESULTS_STATE;
+  })
   .build();
 
 const gameSetupReducer = TypedReducer.builder<GameSetup>()

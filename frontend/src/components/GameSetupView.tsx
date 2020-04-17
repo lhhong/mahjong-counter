@@ -1,7 +1,8 @@
 import * as React from "react";
 import { GameSetupActions } from "../redux/actions";
-import { FunctionComponent, useState } from "react";
-import { connect } from "react-redux";
+import { FunctionComponent, useState, useEffect } from "react";
+import { connect, useSelector } from "react-redux";
+import { getConfig, getPlayers } from "../redux/selectors";
 
 interface DispatchProps {
   setGameSetup: typeof GameSetupActions.set;
@@ -9,6 +10,10 @@ interface DispatchProps {
 type Props = DispatchProps;
 
 const GameSetupViewInternal: FunctionComponent<Props> = (props) => {
+
+  const config = useSelector(getConfig);
+  const players = useSelector(getPlayers);
+
   const [dong, setDong] = useState<string>("player 1");
   const [nan, setNan] = useState<string>("player 2");
   const [xi, setXi] = useState<string>("player 3");
@@ -19,6 +24,22 @@ const GameSetupViewInternal: FunctionComponent<Props> = (props) => {
   const [maxTai, setMaxTai] = useState<number>(5);
   const [shooter, setShooter] = useState<boolean>(true);
   const [sanLiu, setSanLiu] = useState<boolean>(false);
+
+  useEffect(() => {
+    setDong(players.dong);
+    setNan(players.nan);
+    setXi(players.xi);
+    setBei(players.bei);
+  }, [players])
+
+  useEffect(() => {
+    setFactor(config.factor);
+    setMinTai(config.minTai);
+    setMaxTai(config.maxTai);
+    setShooter(config.shooter);
+    setSanLiu(config.sanLiu);
+  }, [config]);
+
   return (<div>
     <h3>Config</h3>
     <label>dong</label>

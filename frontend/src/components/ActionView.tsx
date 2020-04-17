@@ -3,7 +3,7 @@ import { LogicActions } from "../redux/actions";
 import { FunctionComponent, useState } from "react";
 import { connect, useSelector } from "react-redux";
 import Select, { ValueType, OptionsType } from "react-select";
-import { Seat } from "../interfaces/players";
+import { Seat, Players } from "../interfaces/players";
 import { getPlayers } from "../redux/selectors";
 import { useEffect } from "react";
 
@@ -17,22 +17,22 @@ interface PlayerOption {
   label: string;
 }
 
+function getSeatFromOption(option: ValueType<PlayerOption>): Seat | undefined {
+  return (option as PlayerOption)?.value as (Seat | undefined);
+}
+
+function getPlayerOptionFull(players: Players<string>, seat?: Seat): PlayerOption {
+  if (seat === undefined) {
+    return { label: "None" };
+  }
+  return { value: seat, label: players[seat] || seat };
+}
+
 const ActionViewInternal: FunctionComponent<Props> = (props) => {
   const players = useSelector(getPlayers);
 
-  const [playerOptions, setPlayerOptions] = useState<OptionsType<PlayerOption>>([
-    { value: "dong", label: players.dong || "dong" },
-    { value: "nan", label: players.nan || "nan" },
-    { value: "xi", label: players.xi || "xi" },
-    { value: "bei", label: players.bei || "bei" },
-  ]);
-
-  useEffect(() => setPlayerOptions([
-    { value: "dong", label: players.dong || "dong" },
-    { value: "nan", label: players.nan || "nan" },
-    { value: "xi", label: players.xi || "xi" },
-    { value: "bei", label: players.bei || "bei" },
-  ]), [players]);
+  const [targetPlayerOptions, setTargetPlayerOptions] = useState<OptionsType<PlayerOption>>();
+  const [feederPlayerOptions, setFeederPlayerOptions] = useState<OptionsType<PlayerOption>>();
 
   const [event, setEvent] = useState<string>("hu");
 
@@ -49,6 +49,34 @@ const ActionViewInternal: FunctionComponent<Props> = (props) => {
   const [zhaHu, setZhaHu] = useState<boolean>(false);
   const [yiPaoSanXiang, setYiPaoSanXiang] = useState<boolean>(false);
 
+  useEffect(() => {
+    const getPlayerOption = (seat?: Seat) => getPlayerOptionFull(players, seat);
+    setTargetPlayerOptions([
+      getPlayerOption(Seat.DONG),
+      getPlayerOption(Seat.NAN),
+      getPlayerOption(Seat.XI),
+      getPlayerOption(Seat.BEI),
+  ])}, [players]);
+
+  useEffect(() => {
+    const getPlayerOption = (seat?: Seat) => getPlayerOptionFull(players, seat);
+    const options: PlayerOption[] = [getPlayerOption(undefined)];
+    const targetPlayer = getSeatFromOption(target);
+    Object.values(Seat).forEach((seat: Seat) => {
+      if (targetPlayer !== seat) {
+        options.push(getPlayerOption(seat));
+      }
+    });
+    setFeederPlayerOptions(options);
+  }, [players, target]);
+
+  useEffect(() => {
+    const targetSeat = getSeatFromOption(target);
+    if (targetSeat && getSeatFromOption(feeder) === targetSeat) {
+      setFeeder(getPlayerOptionFull(players, undefined));
+    }
+  }, [players, feeder, target]);
+
   return (<div>
     <h3>Create Transaction</h3>
     <div>
@@ -63,14 +91,17 @@ const ActionViewInternal: FunctionComponent<Props> = (props) => {
     <Select
       value={target}
       onChange={(selected) => setTarget(selected)}
-      options={playerOptions}
+      options={targetPlayerOptions}
     />
-    <label>feeder</label>
-    <Select
-      value={feeder}
-      onChange={(selected) => setFeeder(selected)}
-      options={[{ value: undefined, label:"None" }, ...playerOptions]}
-    />
+    {target && <>
+      <label>feeder</label>
+      <Select
+        value={feeder}
+        defaultValue={{ label: "none" }}
+        onChange={(selected) => setFeeder(selected)}
+        options={feederPlayerOptions}
+      />
+    </>}
     {event === "ga" && <>
     <label>an ga</label>
     <input type="checkbox" checked={anGa} onChange={e => setAnGa(e.target.checked)} />
@@ -94,9 +125,14 @@ const ActionViewInternal: FunctionComponent<Props> = (props) => {
     <input type="checkbox" checked={zhaHu} onChange={e => setZhaHu(e.target.checked)} />
     </>}
     <input type="button" value="Confirm" onClick={() => {
+      const targetSeat = getSeatFromOption(target);
+      if (targetSeat === undefined) {
+        alert("Target cannot be empty");
+        return;
+      }
       const common = {
-        target: (target as PlayerOption)?.value as Seat,
-        feeder: (feeder as PlayerOption)?.value as Seat,
+        target: targetSeat,
+        feeder: getSeatFromOption(feeder),
       };
       switch (event) {
         case "hu":
