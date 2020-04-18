@@ -136,7 +136,7 @@ function getGangGains(event: GangEvent, config: Config): Players<number> {
 
 function getEvenSplitGains(event: MJEvent, config: Config, tai: number): Players<number> {
   const costPerPlayer = getCollateralCost(tai, config);
-  const excepts = [{ seat: event.target, value: costPerPlayer }];
+  const excepts = [{ seat: event.target, value: costPerPlayer * 3 }];
   if (config.shooter && event.feeder !== undefined) {
     excepts.push({ seat: event.feeder, value: - costPerPlayer * 3 });
     return createPlayers(0, excepts);
