@@ -1,14 +1,18 @@
 import React, { FunctionComponent } from "react";
-import { getGains, getPlayers } from "../redux/selectors";
+import { getPlayers, getConfig, getHistory } from "../redux/selectors";
 import { useSelector, useDispatch } from "react-redux";
 import { DeleteActions } from "../redux/actions";
 import { useParams } from "react-router-dom";
+import { historyToGains } from "../logic/logic";
 
 export const GainsView: FunctionComponent = () => {
   const { roomId } = useParams();
-  const gains = useSelector(getGains);
   const players = useSelector(getPlayers);
+  const config = useSelector(getConfig);
+  const history = useSelector(getHistory);
   const dispatch = useDispatch();
+
+  const gains = historyToGains(history, config);
 
   return (<div>
     <h3>Gains</h3>

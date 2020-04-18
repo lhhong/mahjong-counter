@@ -46,7 +46,7 @@ function getBodyPromise(respPromise: Promise<Response>): Promise<any> {
   });
 }
 
-export function createDefaultGetWatcher<E>(
+export function createGetWatcher<E>(
   fetchUrl: string,
   fetchAction: TypedAction.NoPayloadDefinition<any>,
   setAction: TypedAction.Definition<any, E>,
@@ -64,7 +64,7 @@ export function createDefaultGetWatcher<E>(
   };
 }
 
-export function createDefaultPostWatcher<D, F, E = any>(
+export function createPostWatcher<D, F, E = any>(
   fetchAction: TypedAction.Definition<any, PostPayload<D, F>>,
   url: string | ((param: F | undefined) => string),
   setAction?: TypedAction.Definition<any, E>,
@@ -85,7 +85,7 @@ export function createDefaultPostWatcher<D, F, E = any>(
   };
 }
 
-export function createDefaultDeleteWatcher<F>(
+export function createDeleteWatcher<F>(
   fetchAction: TypedAction.Definition<any, DeletePayload<F>>,
   url: string | ((param: F | undefined) => string),
 ) {

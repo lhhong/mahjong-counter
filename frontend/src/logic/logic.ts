@@ -2,13 +2,17 @@ import { Config } from "../redux/state";
 import { MJEvent, GaEvent, GangEvent, HuEvent } from "../interfaces/mjEvents";
 import { Players, Seat } from "../interfaces/players";
 import { getCollateralCost, getFeedZiMoCost } from "./calculations";
-import { createPlayers } from "../utils/playersUtil";
+import { createPlayers, sumPlayers } from "../utils/playersUtil";
 import { assertNever } from "../utils/generalUtil";
 
 interface CostStructure {
   feedZiMo: number;
   collateral: number;
   gain: number;
+}
+
+export function historyToGains(history: MJEvent[], config: Config): Players<number> {
+  return sumPlayers(history.map(event => eventToGains(event, config)));
 }
 
 export function eventToGains(event: MJEvent, config: Config): Players<number> {

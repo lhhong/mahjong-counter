@@ -16,7 +16,5 @@ export const getPlayers = createSelector(getGameSetup,
 export const getResults = createSelector(getRootState,
   (rootState) => rootState.results);
 
-export const getGains = createSelector(getResults,
-  (results) => results.gains);
 export const getHistory = createSelector(getResults,
   (results) => results.history);

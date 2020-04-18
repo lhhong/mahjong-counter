@@ -3,12 +3,12 @@ import { Players, Seat } from "../interfaces/players";
 export type PlayerMapper<S, T, R> = (arg1: S, arg2: T) => R;
 
 export function sumPlayers(args: Players<number>[]): Players<number> {
-  return args.reduceRight((arg1, arg2) => ({
+  return args.reduce((arg1, arg2) => ({
     dong: arg1.dong + arg2.dong,
     nan: arg1.nan + arg2.nan,
     xi: arg1.xi + arg2.xi,
     bei: arg1.bei + arg2.bei,
-  }));
+  }), { dong: 0, nan: 0, xi: 0, bei: 0 });
 }
 
 export function mapPlayers<S, T, R>(

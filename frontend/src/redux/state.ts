@@ -22,5 +22,4 @@ export interface Config {
 
 export interface Results {
   history: MJEvent[];
-  gains: Players<number>;
 }

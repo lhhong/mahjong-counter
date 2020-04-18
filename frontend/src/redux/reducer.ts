@@ -1,7 +1,6 @@
 import { combineReducers, setWith, TypedReducer } from "redoodle";
 import { LogicActions, GameSetupActions } from "./actions";
 import { RootState, GameSetup, Results } from "./state";
-import { sumPlayers } from "../utils/playersUtil";
 
 const INITIAL_GAME_SETUP: GameSetup = {
   players: {
@@ -21,12 +20,6 @@ const INITIAL_GAME_SETUP: GameSetup = {
 
 const INITIAL_RESULTS_STATE: Results = {
   history: [],
-  gains: {
-    dong: 0,
-    nan: 0,
-    xi: 0,
-    bei: 0,
-  },
 };
 
 export const INITIAL_ROOT_STATE: RootState = {
@@ -36,12 +29,6 @@ export const INITIAL_ROOT_STATE: RootState = {
 
 const resultsReducer = TypedReducer.builder<Results>()
   .withDefaultHandler((state = INITIAL_RESULTS_STATE, action) => state)
-  .withHandler(LogicActions.updateGains.TYPE, (state, gains) => {
-    return setWith(state, { gains: sumPlayers([state.gains, gains]) });
-  })
-  .withHandler(LogicActions.setGains.TYPE, (state, gains) => {
-    return setWith(state, { gains });
-  })
   .withHandler(LogicActions.newEvent.TYPE, (state, event) => {
     return setWith(state, { history: [event, ...state.history] });
   })
