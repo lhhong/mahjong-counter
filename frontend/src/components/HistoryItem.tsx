@@ -1,18 +1,25 @@
 import React, { FunctionComponent } from "react";
 import { MJEvent } from "../interfaces/mjEvents";
 import { eventToGains } from "../logic/logic";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { getConfig } from "../redux/selectors";
+import { useParams } from "react-router-dom";
+import { DeleteActions } from "../redux/actions";
 
 interface Props {
   event: MJEvent;
 }
 
 export const HistoryItem: FunctionComponent<Props> = ({ event }) => {
+  const { roomId } = useParams();
+  const dispatch = useDispatch();
   const config = useSelector(getConfig);
   const payout = eventToGains(event, config);
   return <div>
     <strong>Transaction</strong>
+    <input type="button" value="Delete entry" onClick={() => {
+      dispatch(DeleteActions.event({ urlParam: { rid: roomId, tid: event.id }}))
+    }} />
     <div>Event: {event.event}</div>
     <div>Target: {event.target}</div>
     {event.feeder && <div>Feeder: {event.feeder}</div>}

@@ -43,7 +43,10 @@ const resultsReducer = TypedReducer.builder<Results>()
     return setWith(state, { gains });
   })
   .withHandler(LogicActions.newEvent.TYPE, (state, event) => {
-    return setWith(state, { history: [event, ...state.history] })
+    return setWith(state, { history: [event, ...state.history] });
+  })
+  .withHandler(LogicActions.setHistory.TYPE, (state, history) => {
+    return setWith(state, { history });
   })
   .withHandler(LogicActions.clearHistory.TYPE, (state, event) => {
     return INITIAL_RESULTS_STATE;
@@ -54,6 +57,12 @@ const gameSetupReducer = TypedReducer.builder<GameSetup>()
   .withDefaultHandler((state = INITIAL_GAME_SETUP, action) => state)
   .withHandler(GameSetupActions.set.TYPE, (state, gameSetup) => {
     return gameSetup;
+  })
+  .withHandler(GameSetupActions.setConfig.TYPE, (state, config) => {
+    return setWith(state, { config });
+  })
+  .withHandler(GameSetupActions.setPlayers.TYPE, (state, players) => {
+    return setWith(state, { players });
   })
   .build();
 

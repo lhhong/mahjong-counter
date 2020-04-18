@@ -1,7 +1,8 @@
 import { Seat } from "./players";
 
 export interface GaEvent {
-  event: "ga",
+  id?: string;
+  event: "ga";
   anGa: boolean;
   completeSet: boolean;
   target: Seat;
@@ -9,16 +10,18 @@ export interface GaEvent {
 }
 
 export interface GangEvent {
-  event: "gang",
+  id?: string;
+  event: "gang";
   anGang: boolean;
   target: Seat;
   feeder?: Seat;
 }
 
 export interface HuEvent {
-  event: "hu",
-  huType?: string,
-  ziMo: boolean,
+  id?: string;
+  event: "hu";
+  huType?: string;
+  ziMo: boolean;
   target: Seat;
   feeder?: Seat;
   tai: number;

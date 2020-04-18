@@ -1,15 +1,14 @@
 import * as React from "react";
-import { GameSetupActions } from "../redux/actions";
+import { PostActions } from "../redux/actions";
 import { FunctionComponent, useState, useEffect } from "react";
-import { connect, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { getConfig, getPlayers } from "../redux/selectors";
+import { useParams } from "react-router-dom";
 
-interface DispatchProps {
-  setGameSetup: typeof GameSetupActions.set;
-}
-type Props = DispatchProps;
+export const GameSetupView: FunctionComponent = () => {
 
-const GameSetupViewInternal: FunctionComponent<Props> = (props) => {
+  const { roomId } = useParams();
+  const dispatch = useDispatch();
 
   const config = useSelector(getConfig);
   const players = useSelector(getPlayers);
@@ -60,11 +59,14 @@ const GameSetupViewInternal: FunctionComponent<Props> = (props) => {
     <input type="checkbox" checked={shooter} onChange={e => setShooter(e.target.checked)} />
     <label>san liu</label>
     <input type="checkbox" checked={sanLiu} onChange={e => setSanLiu(e.target.checked)} />
-    <input type="button" value="Confirm" onClick={() => props.setGameSetup({
-      players: { dong, nan, xi, bei },
-      config: { factor, minTai, maxTai, shooter, sanLiu },
-    })} />
+    <input type="button" value="Confirm" onClick={() => {
+      dispatch(PostActions.setGameSetup({
+        data: {
+          players: { dong, nan, xi, bei },
+          config: { factor, minTai, maxTai, shooter, sanLiu },
+        },
+        urlParam: roomId,
+      }));
+    }} />
   </div>);
 }
-
-export const GameSetupView = connect(() => ({}), {setGameSetup: GameSetupActions.set})(GameSetupViewInternal);

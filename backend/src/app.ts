@@ -1,7 +1,9 @@
 import express from "express";
-import api from "./api";
+import api from "./routers/api";
+import bodyParser from "body-parser";
 
 const app = express();
+app.use(bodyParser.json())
 
 if (process.env.NODE_ENV === "production") {
     app.use("/", express.static("./frontend/build"));

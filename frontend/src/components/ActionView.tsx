@@ -1,16 +1,13 @@
 import * as React from "react";
-import { LogicActions } from "../redux/actions";
+import { PostActions } from "../redux/actions";
 import { FunctionComponent, useState } from "react";
-import { connect, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import Select, { ValueType, OptionsType } from "react-select";
 import { Seat, Players } from "../interfaces/players";
 import { getPlayers } from "../redux/selectors";
 import { useEffect } from "react";
-
-interface DispatchProps {
-  newEvent: typeof LogicActions.newEvent;
-}
-type Props = DispatchProps;
+import { useParams } from "react-router-dom";
+import { MJEvent } from "../interfaces/mjEvents";
 
 interface PlayerOption {
   value?: string;
@@ -28,7 +25,9 @@ function getPlayerOptionFull(players: Players<string>, seat?: Seat): PlayerOptio
   return { value: seat, label: players[seat] || seat };
 }
 
-const ActionViewInternal: FunctionComponent<Props> = (props) => {
+export const ActionView: FunctionComponent = () => {
+  const { roomId } = useParams();
+  const dispatch = useDispatch();
   const players = useSelector(getPlayers);
 
   const [targetPlayerOptions, setTargetPlayerOptions] = useState<OptionsType<PlayerOption>>();
@@ -76,6 +75,13 @@ const ActionViewInternal: FunctionComponent<Props> = (props) => {
       setFeeder(getPlayerOptionFull(players, undefined));
     }
   }, [players, feeder, target]);
+
+  function dispatchPostEvent(mjEvent: MJEvent) {
+    dispatch(PostActions.newEvent({
+      data: mjEvent,
+      urlParam: roomId,
+    }))
+  }
 
   return (<div>
     <h3>Create Transaction</h3>
@@ -136,17 +142,15 @@ const ActionViewInternal: FunctionComponent<Props> = (props) => {
       };
       switch (event) {
         case "hu":
-          props.newEvent({ ...common, event, huType, ziMo, tai, yiPaoSanXiang, zhaHu });
+          dispatchPostEvent({ ...common, event, huType, ziMo, tai, yiPaoSanXiang, zhaHu });
           break;
         case "ga":
-          props.newEvent({ ...common, event, anGa, completeSet });
+          dispatchPostEvent({ ...common, event, anGa, completeSet });
           break;
         case "gang":
-          props.newEvent({ ...common, event, anGang });
+          dispatchPostEvent({ ...common, event, anGang });
           break;
       }
     }} />
   </div>);
 }
-
-export const ActionView = connect(() => ({}), {newEvent: LogicActions.newEvent})(ActionViewInternal);
