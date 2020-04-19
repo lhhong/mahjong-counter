@@ -1,4 +1,4 @@
-import { take, takeEvery } from "@redux-saga/core/effects";
+import { take, takeEvery, TakeEffect } from "@redux-saga/core/effects";
 import { TypedActionString } from "redoodle";
 
 export function takeEveryPayload<T, E extends string = string>(
@@ -8,8 +8,9 @@ export function takeEveryPayload<T, E extends string = string>(
   return takeEvery(action, ({ payload }: { type: E, payload: T }) => worker(payload));
 }
 
-export function takePayload<T, E extends string = string>(
+export function* takePayload<T, E extends string = string>(
   action: TypedActionString<T, E>,
 ) {
-  return take(action).payload;
+  const resp: TakeEffect = yield take(action);
+  return resp.payload;
 }

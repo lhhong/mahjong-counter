@@ -4,6 +4,7 @@ import { MJEvent } from "../interfaces/mjEvents";
 export interface RootState {
   gameSetup: GameSetup;
   results: Results;
+  updates: Updates;
 }
 
 export interface GameSetup {
@@ -22,4 +23,10 @@ export interface Config {
 
 export interface Results {
   history: MJEvent[];
+}
+
+export interface Updates {
+  watching?: string;
+  config: boolean;
+  tx: boolean;
 }

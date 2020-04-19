@@ -6,3 +6,7 @@ export interface PostPayload<T, S> {
 export interface DeletePayload<S> {
   urlParam?: S;
 }
+
+export interface GetPayload<S> {
+  urlParam?: S;
+}

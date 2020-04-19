@@ -1,6 +1,7 @@
 import express from "express";
 import { v4 as uuidv4 } from "uuid";
 import { RedisPool, getKeys, roomExpiry } from "../redis";
+import wss from "../wsServer";
 
 const room = express.Router({ mergeParams: true });
 
@@ -26,6 +27,7 @@ room.route("/config")
           res.status(500).send(err)
         } else {
           res.sendStatus(201);
+          wss.broadcastToRoom(req.params.roomId, "config")
         }
         RedisPool.release(client);
       })
@@ -64,6 +66,7 @@ room.route("/tx")
             res.status(500).send(err);
           } else {
             res.sendStatus(201);
+            wss.broadcastToRoom(req.params.roomId, "tx")
           }
           RedisPool.release(client);
         });
@@ -77,6 +80,7 @@ room.route("/tx")
           res.status(500).send(err);
         } else {
           res.sendStatus(204);
+          wss.broadcastToRoom(req.params.roomId, "tx")
         }
         RedisPool.release(client);
       });
@@ -95,6 +99,7 @@ room.route("/tx/:txid")
             res.status(500).send(err);
           } else {
             res.sendStatus(204);
+            wss.broadcastToRoom(req.params.roomId, "tx")
           }
           RedisPool.release(client);
         });

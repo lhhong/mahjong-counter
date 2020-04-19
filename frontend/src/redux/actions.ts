@@ -2,7 +2,7 @@ import { TypedAction } from "redoodle";
 import { GameSetup, Config } from "./state";
 import { Players } from "../interfaces/players";
 import { MJEvent } from "../interfaces/mjEvents";
-import { PostPayload, DeletePayload } from "../interfaces/fetch";
+import { PostPayload, DeletePayload, GetPayload } from "../interfaces/fetch";
 
 export const NoopAction = TypedAction.defineWithoutPayload("no op")();
 
@@ -16,11 +16,19 @@ const SetGameSetupAction = TypedAction.define("config // set")<GameSetup>();
 const SetConfigAction = TypedAction.define("config // set config")<Config>();
 const SetPlayersAction = TypedAction.define("config // set players")<Players<string>>();
 
+const GetConfig = TypedAction.define("get // config")<GetPayload<string>>();
+const GetHistory = TypedAction.define("get // history")<GetPayload<string>>();
+
 const PostNewEvent = TypedAction.define("post // new event")<PostPayload<MJEvent, string>>();
 const PostSetGameSetup = TypedAction.define("post // set game setup")<PostPayload<GameSetup, string>>();
 
 const DeleteAllHistory = TypedAction.define("delete // all history")<DeletePayload<string>>();
 const DeleteEvent = TypedAction.define("delete // event")<DeletePayload<{ rid?: string, tid?: string }>>();
+
+const UpdatesStartWatch = TypedAction.define("updates // start watch")<string>();
+const UpdatesStopWatch = TypedAction.defineWithoutPayload("updates // stop watch")();
+const UpdatesConfig = TypedAction.define("updates // config")<boolean>();
+const UpdatesTx = TypedAction.define("updates // tx")<boolean>();
 
 export const LogicActions = {
   updateGains: UpdateGainsAction,
@@ -36,6 +44,11 @@ export const GameSetupActions = {
   setPlayers: SetPlayersAction,
 }
 
+export const GetActions = {
+  config: GetConfig,
+  history: GetHistory,
+}
+
 export const PostActions = {
   newEvent: PostNewEvent,
   setGameSetup: PostSetGameSetup,
@@ -44,4 +57,11 @@ export const PostActions = {
 export const DeleteActions = {
   allHistory: DeleteAllHistory,
   event: DeleteEvent,
+}
+
+export const UpdatesAction = {
+  startWatch: UpdatesStartWatch,
+  stopWatch: UpdatesStopWatch,
+  config: UpdatesConfig,
+  tx: UpdatesTx,
 }

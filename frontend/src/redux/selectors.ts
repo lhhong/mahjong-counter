@@ -18,3 +18,6 @@ export const getResults = createSelector(getRootState,
 
 export const getHistory = createSelector(getResults,
   (results) => results.history);
+
+export const getUpdates = createSelector(getRootState,
+  (rootState) => rootState.updates);

@@ -1,7 +1,7 @@
 import { TypedAction } from "redoodle";
 import { takeEveryPayload } from "./redoodleUtil";
 import { call, put } from "@redux-saga/core/effects";
-import { PostPayload, DeletePayload } from "../interfaces/fetch";
+import { PostPayload, DeletePayload, GetPayload } from "../interfaces/fetch";
 
 export function get(url: string): Promise<any> {
   return getBodyPromise(fetch(url));
@@ -46,17 +46,20 @@ function getBodyPromise(respPromise: Promise<Response>): Promise<any> {
   });
 }
 
-export function createGetWatcher<E>(
-  fetchUrl: string,
-  fetchAction: TypedAction.NoPayloadDefinition<any>,
+export function createGetWatcher<F, E>(
+  fetchAction: TypedAction.Definition<any, GetPayload<F>>,
+  url: string | ((param: F | undefined) => string),
   setAction: TypedAction.Definition<any, E>,
   transform: (resBody: any) => E = (resBody) => resBody,
 ) {
   return function*() {
-    yield takeEveryPayload(fetchAction.TYPE, function*() {
+    yield takeEveryPayload(fetchAction.TYPE, function*(payload: GetPayload<F>) {
+      const finalUrl = typeof url === "function" ? url(payload.urlParam) : url;
       try {
-        const resBody = yield call(get, fetchUrl);
-        yield put(setAction.create(transform(resBody)));
+        const resBody = yield call(get, finalUrl);
+        if (resBody !== undefined) {
+          yield put(setAction.create(transform(resBody)));
+        }
       } catch (err) {
         console.warn(err);
       }
