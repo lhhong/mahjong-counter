@@ -11,4 +11,8 @@ if (process.env.NODE_ENV === "production") {
 
 app.use("/api", api);
 
+app.get('*', (req, res) => {
+    res.sendFile('index.html', {root: "./frontend/build"});
+});
+
 app.listen(process.env.PORT || 8080, () => console.log("Server listening"));

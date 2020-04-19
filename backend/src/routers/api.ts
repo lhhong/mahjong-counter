@@ -20,4 +20,6 @@ api.param("roomId", (req, res, next, roomId) => {
 api.get("/", (req, res) => res.send("healthy"));
 api.use("/room/:roomId", room);
 
+api.use("/*", (req, res) => res.sendStatus(404));
+
 export default api;
