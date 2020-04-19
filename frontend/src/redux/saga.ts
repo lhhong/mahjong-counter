@@ -6,8 +6,9 @@ import { getRoomId } from "./selectors";
 
 function createSocketConnection(roomId: string) {
   const path = `/ws/${roomId}`;
+  const protocolPrefix = window.location.protocol === "https:" ? "wss:" : "ws:";
   const { host } = window.location;
-  const url = `ws://${host}${path}`;
+  const url = `${protocolPrefix}//${host}${path}`;
   const socket = new WebSocket(url);
   return socket;
 }
