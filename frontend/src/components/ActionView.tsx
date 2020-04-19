@@ -8,6 +8,7 @@ import { getPlayers } from "../redux/selectors";
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { MJEvent } from "../interfaces/mjEvents";
+import { assertNever } from "../utils/generalUtil";
 
 interface PlayerOption {
   value?: string;
@@ -47,6 +48,12 @@ export const ActionView: FunctionComponent = () => {
   const [ziMo, setZiMo] = useState<boolean>(false);
   const [zhaHu, setZhaHu] = useState<boolean>(false);
   const [yiPaoSanXiang, setYiPaoSanXiang] = useState<boolean>(false);
+
+  // Use string to accept '-' when typing halfway
+  const [dong, setDong] = useState<string>("");
+  const [nan, setNan] = useState<string>("");
+  const [xi, setXi] = useState<string>("");
+  const [bei, setBei] = useState<string>("");
 
   useEffect(() => {
     const getPlayerOption = (seat?: Seat) => getPlayerOptionFull(players, seat);
@@ -92,65 +99,89 @@ export const ActionView: FunctionComponent = () => {
       <label htmlFor="ga">ga</label>
       <input id="gang" type="radio" name="event" value="gang" onChange={e => setEvent(e.target.value)} />
       <label htmlFor="gang">gang</label>
+      <input id="manual" type="radio" name="event" value="manual" onChange={e => setEvent(e.target.value)} />
+      <label htmlFor="manual">manual</label>
     </div>
-    <label>target</label>
-    <Select
-      value={target}
-      onChange={(selected) => setTarget(selected)}
-      options={targetPlayerOptions}
-    />
-    {target && <>
-      <label>feeder</label>
+    {event !== "manual" && <>
+      <label>target</label>
       <Select
-        value={feeder}
-        defaultValue={{ label: "none" }}
-        onChange={(selected) => setFeeder(selected)}
-        options={feederPlayerOptions}
+        value={target}
+        onChange={(selected) => setTarget(selected)}
+        options={targetPlayerOptions}
       />
+      {target && <>
+        <label>feeder</label>
+        <Select
+          value={feeder}
+          defaultValue={{ label: "none" }}
+          onChange={(selected) => setFeeder(selected)}
+          options={feederPlayerOptions}
+        />
+      </>}
     </>}
     {event === "ga" && <>
-    <label>an ga</label>
-    <input type="checkbox" checked={anGa} onChange={e => setAnGa(e.target.checked)} />
-    <label>complete set</label>
-    <input type="checkbox" checked={completeSet} onChange={e => setCompleteSet(e.target.checked)} />
+      <label>an ga</label>
+      <input type="checkbox" checked={anGa} onChange={e => setAnGa(e.target.checked)} />
+      <label>complete set</label>
+      <input type="checkbox" checked={completeSet} onChange={e => setCompleteSet(e.target.checked)} />
     </>}
     {event === "gang" && <>
-    <label>an gang</label>
-    <input type="checkbox" checked={anGang} onChange={e => setAnGang(e.target.checked)} />
+      <label>an gang</label>
+      <input type="checkbox" checked={anGang} onChange={e => setAnGang(e.target.checked)} />
     </>}
     {event === "hu" && <>
-    <label>hu type</label>
-    <input value={huType} onFocus={e => e.target.select()} onChange={e => setHuType(e.target.value)} />
-    <label>tai</label>
-    <input type="number" value={tai} onFocus={e => e.target.select()} onChange={e => setTai(e.target.valueAsNumber)} />
-    <label>zi mo</label>
-    <input type="checkbox" checked={ziMo} onChange={e => setZiMo(e.target.checked)} />
-    <label>yi pao san xiang</label>
-    <input type="checkbox" checked={yiPaoSanXiang} onChange={e => setYiPaoSanXiang(e.target.checked)} />
-    <label>zha hu</label>
-    <input type="checkbox" checked={zhaHu} onChange={e => setZhaHu(e.target.checked)} />
+      <label>hu type</label>
+      <input value={huType} onFocus={e => e.target.select()} onChange={e => setHuType(e.target.value)} />
+      <label>tai</label>
+      <input type="number" value={tai} onFocus={e => e.target.select()} onChange={e => setTai(e.target.valueAsNumber)} />
+      <label>zi mo</label>
+      <input type="checkbox" checked={ziMo} onChange={e => setZiMo(e.target.checked)} />
+      <label>yi pao san xiang</label>
+      <input type="checkbox" checked={yiPaoSanXiang} onChange={e => setYiPaoSanXiang(e.target.checked)} />
+      <label>zha hu</label>
+      <input type="checkbox" checked={zhaHu} onChange={e => setZhaHu(e.target.checked)} />
+    </>}
+    {event === "manual" && <>
+      <label>{players.dong}</label>
+      <input type="number" value={dong} onFocus={e => e.target.select()} onChange={e => setDong(e.target.value)} />
+      <label>{players.nan}</label>
+      <input type="number" value={nan} onFocus={e => e.target.select()} onChange={e => setNan(e.target.value)} />
+      <label>{players.xi}</label>
+      <input type="number" value={xi} onFocus={e => e.target.select()} onChange={e => setXi(e.target.value)} />
+      <label>{players.bei}</label>
+      <input type="number" value={bei} onFocus={e => e.target.select()} onChange={e => setBei(e.target.value)} />
     </>}
     <input type="button" value="Confirm" onClick={() => {
-      const targetSeat = getSeatFromOption(target);
-      if (targetSeat === undefined) {
-        alert("Target cannot be empty");
-        return;
+      if (event === "manual") {
+        dispatchPostEvent({ event, gains: { dong: Number(dong), nan: Number(nan), xi: Number(xi), bei: Number(bei) } })
+      } else {
+        const targetSeat = getSeatFromOption(target);
+        if (targetSeat === undefined) {
+          alert("Target cannot be empty");
+          return;
+        }
+        const common = {
+          target: targetSeat,
+          feeder: getSeatFromOption(feeder),
+        };
+        switch (event) {
+          case "hu":
+            if (!feeder && !ziMo) {
+              alert("Need to either be zi mo or have a feeder");
+              return;
+            }
+            dispatchPostEvent({ ...common, event, huType, ziMo, tai, yiPaoSanXiang, zhaHu });
+            break;
+          case "ga":
+            dispatchPostEvent({ ...common, event, anGa, completeSet });
+            break;
+          case "gang":
+            dispatchPostEvent({ ...common, event, anGang });
+            break;
+        }
       }
-      const common = {
-        target: targetSeat,
-        feeder: getSeatFromOption(feeder),
-      };
-      switch (event) {
-        case "hu":
-          dispatchPostEvent({ ...common, event, huType, ziMo, tai, yiPaoSanXiang, zhaHu });
-          break;
-        case "ga":
-          dispatchPostEvent({ ...common, event, anGa, completeSet });
-          break;
-        case "gang":
-          dispatchPostEvent({ ...common, event, anGang });
-          break;
-      }
+      setTarget(undefined);
+      setFeeder(undefined);
     }} />
   </div>);
 }

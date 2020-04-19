@@ -1,4 +1,4 @@
-import { Seat } from "./players";
+import { Seat, Players } from "./players";
 
 export interface GaEvent {
   id?: string;
@@ -29,4 +29,12 @@ export interface HuEvent {
   zhaHu: boolean;
 }
 
-export type MJEvent = GaEvent | GangEvent | HuEvent;
+export interface ManualEvent {
+  id?: string;
+  event: "manual";
+  gains: Players<number>;
+}
+
+export type RegularMJEvent = GaEvent | GangEvent | HuEvent;
+
+export type MJEvent = RegularMJEvent | ManualEvent;

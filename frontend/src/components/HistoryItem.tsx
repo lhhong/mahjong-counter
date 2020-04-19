@@ -2,7 +2,7 @@ import React, { FunctionComponent } from "react";
 import { MJEvent } from "../interfaces/mjEvents";
 import { eventToGains } from "../logic/logic";
 import { useSelector, useDispatch } from "react-redux";
-import { getConfig } from "../redux/selectors";
+import { getConfig, getPlayers } from "../redux/selectors";
 import { useParams } from "react-router-dom";
 import { DeleteActions } from "../redux/actions";
 
@@ -13,6 +13,7 @@ interface Props {
 export const HistoryItem: FunctionComponent<Props> = ({ event }) => {
   const { roomId } = useParams();
   const dispatch = useDispatch();
+  const players = useSelector(getPlayers);
   const config = useSelector(getConfig);
   const payout = eventToGains(event, config);
   return <div>
@@ -21,14 +22,14 @@ export const HistoryItem: FunctionComponent<Props> = ({ event }) => {
       dispatch(DeleteActions.event({ urlParam: { rid: roomId, tid: event.id }}))
     }} />
     <div>Event: {event.event}</div>
-    <div>Target: {event.target}</div>
-    {event.feeder && <div>Feeder: {event.feeder}</div>}
+    {event.event !== "manual" && <div>Target: {players[event.target]} ({event.target})</div>}
+    {event.event !== "manual" && event.feeder && <div>Feeder: {players[event.feeder]} ({event.target})</div>}
     {event.event === "ga" && <>
-      <div>an ga: {event.anGa}</div>
-      <div>complete set: {event.completeSet}</div>
+      <div>an ga: {event.anGa.toString()}</div>
+      <div>complete set: {event.completeSet.toString()}</div>
     </>}
     {event.event === "gang" && <>
-      <div>an gang: {event.anGang}</div>
+      <div>an gang: {event.anGang.toString()}</div>
     </>}
     {event.event === "hu" && <>
       {event.huType && <div>hu type: {event.huType}</div>}
@@ -38,9 +39,9 @@ export const HistoryItem: FunctionComponent<Props> = ({ event }) => {
       {event.zhaHu && <div>Zha Hu</div>}
     </>}
     <div>Payout:</div>
-    <div>dong: {payout.dong}</div>
-    <div>nan: {payout.nan}</div>
-    <div>xi: {payout.xi}</div>
-    <div>bei: {payout.bei}</div>
+    <div>{players.dong} (dong): {payout.dong}</div>
+    <div>{players.nan} (nan): {payout.nan}</div>
+    <div>{players.xi} (xi): {payout.xi}</div>
+    <div>{players.bei} (bei): {payout.bei}</div>
   </div>
 }

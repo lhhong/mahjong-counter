@@ -1,5 +1,5 @@
 import { Config } from "../redux/state";
-import { MJEvent, GaEvent, GangEvent, HuEvent } from "../interfaces/mjEvents";
+import { MJEvent, GaEvent, GangEvent, HuEvent, RegularMJEvent } from "../interfaces/mjEvents";
 import { Players, Seat } from "../interfaces/players";
 import { getCollateralCost, getFeedZiMoCost } from "./calculations";
 import { createPlayers, sumPlayers } from "../utils/playersUtil";
@@ -23,6 +23,8 @@ export function eventToGains(event: MJEvent, config: Config): Players<number> {
       return getGangGains(event, config);
     case "hu":
       return getHuGains(event, config);
+    case "manual":
+      return event.gains;
     default:
       return assertNever(event);
   }
@@ -138,7 +140,7 @@ function getGangGains(event: GangEvent, config: Config): Players<number> {
   return getEvenSplitGains(event, config, tai);
 }
 
-function getEvenSplitGains(event: MJEvent, config: Config, tai: number): Players<number> {
+function getEvenSplitGains(event: RegularMJEvent, config: Config, tai: number): Players<number> {
   const costPerPlayer = getCollateralCost(tai, config);
   const excepts = [{ seat: event.target, value: costPerPlayer * 3 }];
   if (config.shooter && event.feeder !== undefined) {
