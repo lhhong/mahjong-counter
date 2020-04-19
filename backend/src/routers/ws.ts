@@ -1,5 +1,4 @@
 import express from "express";
-import api from "./api";
 import wss from "../wsServer";
 
 const ws = express.Router()
