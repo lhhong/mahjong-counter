@@ -20,7 +20,7 @@ export const RedisFactory: Pool.Factory<Redis.RedisClient> = {
   }
 }
 
-export const RedisPool = Pool.createPool(RedisFactory, { min: 1, max: 10 });
+export const RedisPool = Pool.createPool(RedisFactory, { min: 0, max: 10 });
 
 export const roomExpiry = 3600 * 5;
 export function getKeys(roomId: string) {
