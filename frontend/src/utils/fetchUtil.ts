@@ -1,7 +1,8 @@
 import { TypedAction } from "redoodle";
 import { takeEveryPayload } from "./redoodleUtil";
-import { call, put } from "@redux-saga/core/effects";
+import { call, put, select } from "@redux-saga/core/effects";
 import { PostPayload, DeletePayload, GetPayload } from "../interfaces/fetch";
+import { Selector } from "reselect";
 
 export function get(url: string): Promise<any> {
   return getBodyPromise(fetch(url));
@@ -46,15 +47,17 @@ function getBodyPromise(respPromise: Promise<Response>): Promise<any> {
   });
 }
 
-export function createGetWatcher<F, E>(
+export function createGetWatcher<F, E, G>(
   fetchAction: TypedAction.Definition<any, GetPayload<F>>,
-  url: string | ((param: F | undefined) => string),
+  url: string | ((stateParam: G | undefined, actionParam: F | undefined) => string),
   setAction: TypedAction.Definition<any, E>,
+  paramSelector?: Selector<any, G>,
   transform: (resBody: any) => E = (resBody) => resBody,
 ) {
   return function*() {
     yield takeEveryPayload(fetchAction.TYPE, function*(payload: GetPayload<F>) {
-      const finalUrl = typeof url === "function" ? url(payload.urlParam) : url;
+      const stateParam = paramSelector ? yield select(paramSelector) : undefined;
+      const finalUrl = typeof url === "function" ? url(stateParam, payload.urlParam) : url;
       try {
         const resBody = yield call(get, finalUrl);
         if (resBody !== undefined) {
@@ -67,15 +70,17 @@ export function createGetWatcher<F, E>(
   };
 }
 
-export function createPostWatcher<D, F, E = any>(
+export function createPostWatcher<D, F, G, E = any>(
   fetchAction: TypedAction.Definition<any, PostPayload<D, F>>,
-  url: string | ((param: F | undefined) => string),
+  url: string | ((stateParam: G | undefined, actionParam: F | undefined) => string),
+  paramSelector?: Selector<any, G>,
   setAction?: TypedAction.Definition<any, E>,
   transform: (resBody: any) => E = (resBody) => resBody,
 ) {
   return function*() {
     yield takeEveryPayload(fetchAction.TYPE, function*(payload: PostPayload<D, F>) {
-      const finalUrl = typeof url === "function" ? url(payload.urlParam) : url;
+      const stateParam = paramSelector ? yield select(paramSelector) : undefined;
+      const finalUrl = typeof url === "function" ? url(stateParam, payload.urlParam) : url;
       try {
         const resBody = yield call(post, finalUrl, payload.data);
         if (setAction) {
@@ -88,13 +93,15 @@ export function createPostWatcher<D, F, E = any>(
   };
 }
 
-export function createDeleteWatcher<F>(
+export function createDeleteWatcher<F, G>(
   fetchAction: TypedAction.Definition<any, DeletePayload<F>>,
-  url: string | ((param: F | undefined) => string),
+  url: string | ((stateParam: G | undefined, actionParam: F | undefined) => string),
+  paramSelector?: Selector<any, G>,
 ) {
   return function*() {
     yield takeEveryPayload(fetchAction.TYPE, function*(payload: DeletePayload<F>) {
-      const finalUrl = typeof url === "function" ? url(payload.urlParam) : url;
+      const stateParam = paramSelector ? yield select(paramSelector) : undefined;
+      const finalUrl = typeof url === "function" ? url(stateParam, payload.urlParam) : url;
       try {
         yield call(fetchDelete, finalUrl);
       } catch (err) {

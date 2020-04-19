@@ -1,6 +1,6 @@
 import { combineReducers, setWith, TypedReducer } from "redoodle";
 import { LogicActions, GameSetupActions, UpdatesAction } from "./actions";
-import { RootState, GameSetup, Results, Updates } from "./state";
+import { RootState, GameSetup, Results, Updates, App } from "./state";
 
 const INITIAL_GAME_SETUP: GameSetup = {
   players: {
@@ -27,10 +27,13 @@ const INITIAL_UPDATES_STATE: Updates = {
   tx: false,
 }
 
+const INITIAL_APP_STATE: App = {};
+
 export const INITIAL_ROOT_STATE: RootState = {
   gameSetup: INITIAL_GAME_SETUP,
   results: INITIAL_RESULTS_STATE,
   updates: INITIAL_UPDATES_STATE,
+  app: INITIAL_APP_STATE,
 };
 
 const resultsReducer = TypedReducer.builder<Results>()
@@ -67,7 +70,7 @@ const updatesReducer = TypedReducer.builder<Updates>()
   .withHandler(UpdatesAction.tx.TYPE, (state, tx) => {
     return setWith(state, { tx });
   })
-  .withHandler(UpdatesAction.startWatch.TYPE, (state, roomId) => {
+  .withHandler(UpdatesAction.setWatching.TYPE, (state, roomId) => {
     return setWith(state, { watching: roomId });
   })
   .withHandler(UpdatesAction.stopWatch.TYPE, (state) => {
@@ -75,8 +78,16 @@ const updatesReducer = TypedReducer.builder<Updates>()
   })
   .build()
 
+const roomIdReducer = TypedReducer.builder<App>()
+  .withDefaultHandler((state = INITIAL_APP_STATE, action) => state)
+  .withHandler(GameSetupActions.setRoomId.TYPE, (state, roomId) => {
+    return setWith(state, { roomId });
+  })
+  .build();
+
 export const rootReducer = combineReducers<RootState>({
   results: resultsReducer,
   gameSetup: gameSetupReducer,
   updates: updatesReducer,
+  app: roomIdReducer,
 });

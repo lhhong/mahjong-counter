@@ -6,6 +6,8 @@ import { PostPayload, DeletePayload, GetPayload } from "../interfaces/fetch";
 
 export const NoopAction = TypedAction.defineWithoutPayload("no op")();
 
+const SetRoomIdAction = TypedAction.define("app // set room id")<string | undefined>();
+
 const UpdateGainsAction = TypedAction.define("logic // update gains")<Players<number>>();
 const SetGainsAction = TypedAction.define("logic // set gains")<Players<number>>();
 const NewEventAction = TypedAction.define("logic // new event")<MJEvent>();
@@ -16,16 +18,17 @@ const SetGameSetupAction = TypedAction.define("config // set")<GameSetup>();
 const SetConfigAction = TypedAction.define("config // set config")<Config>();
 const SetPlayersAction = TypedAction.define("config // set players")<Players<string>>();
 
-const GetConfig = TypedAction.define("get // config")<GetPayload<string>>();
-const GetHistory = TypedAction.define("get // history")<GetPayload<string>>();
+const GetConfig = TypedAction.define("get // config")<GetPayload>();
+const GetHistory = TypedAction.define("get // history")<GetPayload>();
 
-const PostNewEvent = TypedAction.define("post // new event")<PostPayload<MJEvent, string>>();
-const PostSetGameSetup = TypedAction.define("post // set game setup")<PostPayload<GameSetup, string>>();
+const PostNewEvent = TypedAction.define("post // new event")<PostPayload<MJEvent>>();
+const PostSetGameSetup = TypedAction.define("post // set game setup")<PostPayload<GameSetup>>();
 
-const DeleteAllHistory = TypedAction.define("delete // all history")<DeletePayload<string>>();
-const DeleteEvent = TypedAction.define("delete // event")<DeletePayload<{ rid?: string, tid?: string }>>();
+const DeleteAllHistory = TypedAction.define("delete // all history")<DeletePayload>();
+const DeleteEvent = TypedAction.define("delete // event")<DeletePayload<string>>();
 
-const UpdatesStartWatch = TypedAction.define("updates // start watch")<string>();
+const UpdatesSetWatching = TypedAction.define("updates // set watching")<string>();
+const UpdatesStartWatch = TypedAction.defineWithoutPayload("updates // start watch")();
 const UpdatesStopWatch = TypedAction.defineWithoutPayload("updates // stop watch")();
 const UpdatesConfig = TypedAction.define("updates // config")<boolean>();
 const UpdatesTx = TypedAction.define("updates // tx")<boolean>();
@@ -42,6 +45,7 @@ export const GameSetupActions = {
   set: SetGameSetupAction,
   setConfig: SetConfigAction,
   setPlayers: SetPlayersAction,
+  setRoomId: SetRoomIdAction,
 }
 
 export const GetActions = {
@@ -60,6 +64,7 @@ export const DeleteActions = {
 }
 
 export const UpdatesAction = {
+  setWatching: UpdatesSetWatching,
   startWatch: UpdatesStartWatch,
   stopWatch: UpdatesStopWatch,
   config: UpdatesConfig,

@@ -3,7 +3,6 @@ import { MJEvent } from "../interfaces/mjEvents";
 import { eventToGains } from "../logic/logic";
 import { useSelector, useDispatch } from "react-redux";
 import { getConfig, getPlayers } from "../redux/selectors";
-import { useParams } from "react-router-dom";
 import { DeleteActions } from "../redux/actions";
 
 interface Props {
@@ -11,7 +10,6 @@ interface Props {
 }
 
 export const HistoryItem: FunctionComponent<Props> = ({ event }) => {
-  const { roomId } = useParams();
   const dispatch = useDispatch();
   const players = useSelector(getPlayers);
   const config = useSelector(getConfig);
@@ -19,7 +17,7 @@ export const HistoryItem: FunctionComponent<Props> = ({ event }) => {
   return <div>
     <strong>Transaction</strong>
     <input type="button" value="Delete entry" onClick={() => {
-      dispatch(DeleteActions.event({ urlParam: { rid: roomId, tid: event.id }}))
+      dispatch(DeleteActions.event({ urlParam: event.id }))
     }} />
     <div>Event: {event.event}</div>
     {event.event !== "manual" && <div>Target: {players[event.target]} ({event.target})</div>}

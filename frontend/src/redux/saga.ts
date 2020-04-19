@@ -1,8 +1,8 @@
 import { createPostWatcher, createDeleteWatcher, createGetWatcher } from "../utils/fetchUtil";
 import { PostActions, DeleteActions, UpdatesAction, GetActions, GameSetupActions, LogicActions } from "./actions";
-import { all, call, put, race, spawn, take, takeEvery } from "@redux-saga/core/effects";
+import { all, call, put, race, select, spawn, take, takeEvery } from "@redux-saga/core/effects";
 import { eventChannel, EventChannel } from "redux-saga";
-import { takePayload } from "../utils/redoodleUtil";
+import { getRoomId } from "./selectors";
 
 function createSocketConnection(roomId: string) {
   const path = `/ws/${roomId}`;
@@ -38,8 +38,10 @@ function* watchMessageReceipt(socket: WebSocket) {
 
 export function* websocketSaga() {
   while (true) {
-    const roomId: string = yield takePayload(UpdatesAction.startWatch.TYPE);
+    yield take(UpdatesAction.startWatch.TYPE);
+    const roomId: string = yield select(getRoomId);
     const socket: WebSocket = yield call(createSocketConnection, roomId);
+    yield put(UpdatesAction.setWatching(roomId));
     yield race([
       take(UpdatesAction.stopWatch.TYPE),
       watchMessageReceipt(socket),
@@ -53,11 +55,11 @@ export function* websocketSaga() {
 export function* rootSaga() {
   yield all([
     spawn(websocketSaga),
-    spawn(createPostWatcher(PostActions.setGameSetup, (roomId) => `/api/room/${roomId}/config`)),
-    spawn(createPostWatcher(PostActions.newEvent, (roomId) => `/api/room/${roomId}/tx`)),
-    spawn(createDeleteWatcher(DeleteActions.allHistory, (roomId) => `/api/room/${roomId}/tx`)),
-    spawn(createDeleteWatcher(DeleteActions.event, (param) => `/api/room/${param?.rid}/tx/${param?.tid}`)),
-    spawn(createGetWatcher(GetActions.config, (roomId) => `/api/room/${roomId}/config`, GameSetupActions.set)),
-    spawn(createGetWatcher(GetActions.history, (roomId) => `/api/room/${roomId}/tx`, LogicActions.setHistory)),
+    spawn(createPostWatcher(PostActions.setGameSetup, (roomId) => `/api/room/${roomId}/config`, getRoomId)),
+    spawn(createPostWatcher(PostActions.newEvent, (roomId) => `/api/room/${roomId}/tx`, getRoomId)),
+    spawn(createDeleteWatcher(DeleteActions.allHistory, (roomId) => `/api/room/${roomId}/tx`, getRoomId)),
+    spawn(createDeleteWatcher(DeleteActions.event, (roomId, tid) => `/api/room/${roomId}/tx/${tid}`, getRoomId)),
+    spawn(createGetWatcher(GetActions.config, (roomId) => `/api/room/${roomId}/config`, GameSetupActions.set, getRoomId)),
+    spawn(createGetWatcher(GetActions.history, (roomId) => `/api/room/${roomId}/tx`, LogicActions.setHistory, getRoomId)),
   ]);
 }

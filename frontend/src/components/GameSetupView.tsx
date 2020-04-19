@@ -3,11 +3,9 @@ import { PostActions } from "../redux/actions";
 import { FunctionComponent, useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { getConfig, getPlayers } from "../redux/selectors";
-import { useParams } from "react-router-dom";
 
 export const GameSetupView: FunctionComponent = () => {
 
-  const { roomId } = useParams();
   const dispatch = useDispatch();
 
   const config = useSelector(getConfig);
@@ -64,8 +62,7 @@ export const GameSetupView: FunctionComponent = () => {
         data: {
           players: { dong, nan, xi, bei },
           config: { factor, minTai, maxTai, shooter, sanLiu },
-        },
-        urlParam: roomId,
+        }
       }));
     }} />
   </div>);

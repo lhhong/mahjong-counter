@@ -6,9 +6,7 @@ import Select, { ValueType, OptionsType } from "react-select";
 import { Seat, Players } from "../interfaces/players";
 import { getPlayers } from "../redux/selectors";
 import { useEffect } from "react";
-import { useParams } from "react-router-dom";
 import { MJEvent } from "../interfaces/mjEvents";
-import { assertNever } from "../utils/generalUtil";
 
 interface PlayerOption {
   value?: string;
@@ -27,7 +25,6 @@ function getPlayerOptionFull(players: Players<string>, seat?: Seat): PlayerOptio
 }
 
 export const ActionView: FunctionComponent = () => {
-  const { roomId } = useParams();
   const dispatch = useDispatch();
   const players = useSelector(getPlayers);
 
@@ -84,10 +81,7 @@ export const ActionView: FunctionComponent = () => {
   }, [players, feeder, target]);
 
   function dispatchPostEvent(mjEvent: MJEvent) {
-    dispatch(PostActions.newEvent({
-      data: mjEvent,
-      urlParam: roomId,
-    }))
+    dispatch(PostActions.newEvent({ data: mjEvent }));
   }
 
   return (<div>

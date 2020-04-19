@@ -5,6 +5,7 @@ export interface RootState {
   gameSetup: GameSetup;
   results: Results;
   updates: Updates;
+  app: App;
 }
 
 export interface GameSetup {
@@ -26,7 +27,11 @@ export interface Results {
 }
 
 export interface Updates {
-  watching?: string;
   config: boolean;
   tx: boolean;
+  watching?: string;
+}
+
+export interface App {
+  roomId?: string;
 }
