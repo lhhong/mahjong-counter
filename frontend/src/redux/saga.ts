@@ -1,6 +1,6 @@
 import { createPostWatcher, createDeleteWatcher, createGetWatcher } from "../utils/fetchUtil";
 import { PostActions, DeleteActions, UpdatesAction, GetActions, GameSetupActions, LogicActions } from "./actions";
-import { all, call, cancel, fork, put, race, spawn, take, takeEvery } from "@redux-saga/core/effects";
+import { all, call, put, race, spawn, take, takeEvery } from "@redux-saga/core/effects";
 import { eventChannel, EventChannel } from "redux-saga";
 import { takePayload } from "../utils/redoodleUtil";
 
